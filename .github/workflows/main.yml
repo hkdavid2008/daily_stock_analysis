@@ -1,0 +1,28 @@
+name: Upstream main
+
+permissions:
+  contents: write
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # 每天 UTC 时间午夜 0点自动执行同步
+  workflow_dispatch: # 允许手动点击运行
+
+jobs:
+  sync_latest_from_upstream:
+    runs-on: ubuntu-latest
+    name: Sync latest commits from upstream repo
+    steps:
+    - name: Checkout target repo
+      uses: actions/checkout@v4
+      with:
+        ref: main  # 请根据你的默认分支（如 master）进行修改
+
+    - name: Sync Upstream Repository
+      uses: aormsby/Fork-Sync-Upstream@v3
+      with:
+        upstream_repository: 原作者用户名/原项目名
+        upstream_branch: main # 原项目的主分支
+        target_branch: main   # 你Fork项目的主分支
+        target_repo_token: ${{ secrets.GITHUB_TOKEN }}
+        test_mode: false
